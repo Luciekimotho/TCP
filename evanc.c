@@ -7,8 +7,7 @@
 
 
 int peers[10] , peercount  ;
-void *StartListening(void *port)
-{
+void *StartListening(void *port){
 	int clients[10], myport;
 	int welcomeSocket, newSocket ;
 	char buffer[1024] , peerport[4];
@@ -16,7 +15,6 @@ void *StartListening(void *port)
 	struct sockaddr_storage serverStorage;
 	socklen_t clilen;
 	socklen_t addr_size;
-
 
 	myport = (int) port ;
 	//create server socket and configure
@@ -26,7 +24,6 @@ void *StartListening(void *port)
 	serverAddr.sin_family = AF_INET;
 	serverAddr.sin_port = htons(myport);
 	serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
-
 
 	//bind to socket
 	bind(welcomeSocket, (struct sockaddr *) &serverAddr, sizeof(serverAddr));
@@ -53,11 +50,7 @@ void *StartListening(void *port)
 		//reply with client port
 		strcpy(buffer, "acknowledged");
 		send(newSocket,buffer,strlen(buffer),0);
-
-
-
   }
-
 	return NULL ;
 	}
 

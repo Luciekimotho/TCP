@@ -42,7 +42,7 @@ int ConnectToServer() {
     printf("Connect failed. Error\n");
     return 1;
   }
-  return peers[0];
+  return sock;
 }
 
 void SendNewMessage() {
@@ -116,28 +116,29 @@ void *StartListening(void *port){
 }
 
 //send a message
-void sendMsg(int port){
+void sendMsg(int sock){
   char buffer[1024];
   int n;
 
   //printf("Chat session live. \n");
   //printf("Enter message: \n");
   //scanf("%s",myMessage );
-  printf("%d\n",sock );
-  printf("Sending  message....");
+  //printf("%d\n",sock );
+  printf("Sending  message....\n");
   bzero(buffer, 256) ;
 
   strcpy(buffer, "lol");
-  n = write(sock, buffer, strlen(buffer));
+  //n = write(sock, buffer, strlen(buffer));
 
-  recv(sock, buffer, 1024, 0);
-  printf("Peer response is: %s\n",buffer);
+  //recv(sock, buffer, 1024, 0);
+  //printf("Peer response is: %s\n",buffer);
 
-  if (send(sock, myMessage, strlen(myMessage), 0) < 0) {
+  if (send(sock, buffer, strlen(buffer), 0) < 0) {
     printf("Send failed.\n");
     return 1;
   }
-  printf("Message has been sent to peers\n");
+  printf("Message to be sent is: %s. \n", buffer);
+  //printf(" Message has been sent to peers\n");
   return NULL;
 }
 
@@ -172,8 +173,8 @@ void mainMenu(){
     //sending message to the other clients peer to peer
     printf("\n");
     printf("--------------------------------------------------------------------------------\n");
-    //sendMsg(sock);
-    SendNewMessage();
+    sendMsg(sock);
+    //SendNewMessage();
     printf("\n");
   }else if (choice == 3) {
     //receiving a message from other clients
@@ -185,22 +186,19 @@ void mainMenu(){
 }
 
 int main() {
-  int myport;
+  //int myport;
   pthread_t myThread;
-
   //connection to the server.
-  myport = ConnectToServer();
+  sock = ConnectToServer();
 
-  // StartListening(myport);
-  pthread_create(&myThread, NULL, StartListening, (void*) myport);
+  // StartListening(sock);
+  pthread_create(&myThread, NULL, StartListening, (void*) sock);
 
   //printf("peer count %d\n " , peercount);
-  //sendMsg(myport);
+  sendMsg(sock);
 
   printf("\n");
-  printf("\n");
-  printf("--------------------------------------------------------------------------------\n");
-  mainMenu();
+  //mainMenu();
   printf("--------------------------------------------------------------------------------\n");
 
   //showing list of online clients

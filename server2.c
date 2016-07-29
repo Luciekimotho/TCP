@@ -8,20 +8,6 @@
 #include <pthread.h>
 #include <signal.h>
 
-//#define MAXCLIENTS 10
-
-
-//Structure for the client
-/*struct Client{
-  char name[50];
-  int port;
-  int clientSockDescr;
-}*/
-
-//struct Client myClient[MAXCLIENTS];
-
-//void *thread_handler(void *);
-
 //Initializing the server socket.
 //Functions for creating socket, binding and listening
 int initializeServrSkt(){
@@ -83,7 +69,6 @@ int main() {
   //Calling the socket initializing function.
   int serverSocket = initializeServrSkt();
 
-  //max of 5 clients
   printf("Waiting for incoming connections...\n");
 
   //accept
@@ -100,20 +85,24 @@ int main() {
   printf("Connection accepted.\n");
 
 
-printf("\nmessage received");
+    printf("Preparing to receive the message\n");
+    printf("\n");
+    printf("\n");
   //receive message
-  if (peercount <= 10) {
-	  
-    read_msg_size = recv(socket, client_msg, 1024, 0);
-    //write(socket, client_msg, strlen(client_msg));
-    printf("Message from client %d is %s\n",peercount, client_msg);
-    peercount++;
-  }
+    if (peercount <= 5) {
+	  read_msg_size = recv(socket, client_msg, 1024, 0);
+	  printf("Read msg size: %d. \n", read_msg_size);
+	  while((recv(socket, client_msg, 1024, 0)) > 0){
+          //write(socket, client_msg, strlen(client_msg));
+          printf("Message from client %d is: %s.\n",peercount, client_msg);
+          peercount++;
+		  } 
+       }
     //puts(client_msg);
-    if (read_size == 0) {
+    if (read_msg_size == 0) {
     //  printf("Client disconnected\n");
-   }else if (read_size == -1) {
-     printf("Recv failed\n");
+   }else if (read_msg_size == -1) {
+     printf("Recv failed.\n");
    }
     printf("--------------------------------------------------------------------------------\n");
 }
@@ -123,10 +112,9 @@ printf("\nmessage received");
    close(serverSocket);
 }
 
-
   void *thread_handler(void *socket_desc){
     int socket = *(int*)socket_desc;
-    int read_size, read_msg_size;
+    int read_msg_size;
     char client_msg[1000], client_user_name[50];
     int i;
     int peercount;
@@ -137,16 +125,16 @@ printf("\nmessage received");
      //write(socket, client_user_name, strlen(client_user_name));
     // printf("Client %s is connected.\n", client_user_name);
       //receive message
-      if (peercount <= 10) {
+      if (peercount <= 5) {
         read_msg_size = recv(socket, client_msg, 1000, 0);
         write(socket, client_msg, strlen(client_msg));
         printf("Message from client %d: %s\n",peercount, client_msg);
         peercount++;
       }
      //puts(client_msg);
-    if (read_size == 0) {
+    if (read_msg_size == 0) {
     //  printf("Client disconnected\n");
-    }else if (read_size == -1) {
+    }else if (read_msg_size == -1) {
       printf("Recv failed\n");
     }
     free(socket_desc);
